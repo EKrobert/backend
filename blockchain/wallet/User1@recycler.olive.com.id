@@ -1,0 +1,1 @@
+{"credentials":{"certificate":"-----BEGIN CERTIFICATE-----\nMock Certificate for User1@recycler.olive.com\n-----END CERTIFICATE-----","privateKey":"-----BEGIN PRIVATE KEY-----\nMock Private Key for User1@recycler.olive.com\n-----END PRIVATE KEY-----"},"mspId":"RecyclerOrgMSP","type":"X.509","version":1}
