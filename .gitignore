@@ -1,0 +1,157 @@
+# Node.js dependencies and build artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+.pnp.*
+.yarn/
+
+# Runtime and temporary files
+*.log
+logs/
+pids/
+*.pid
+*.seed
+*.pid.lock
+.DS_Store
+Thumbs.db
+
+# Environment variables and configuration
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+config.json
+config.yaml
+!example.env
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker artifacts
+docker-compose.override.yml
+.docker/
+
+# Hyperledger Fabric specific
+# Wallet files (contains private keys and certificates)
+wallet/
+!wallet/.gitkeep
+
+# Crypto material (private keys, certificates)
+crypto-config/
+channel-artifacts/
+*.pem
+*.key
+*_sk
+priv_sk
+keystore/
+signcerts/
+
+# Fabric network artifacts
+*.block
+*.tx
+*.json.bak
+orderer.genesis.block
+mychannel.block
+
+# Chaincode build artifacts
+chaincode/*.tar.gz
+vendor/
+pkg/
+bin/
+
+# Go specific (for chaincode)
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+go.work.sum
+
+# Coverage reports
+coverage/
+*.cover
+*.coverprofile
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+*.temp
+
+# Archive files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# SSL certificates
+*.crt
+*.p12
+*.pfx
+
+# Fabric CA client files
+fabric-ca-client-config.yaml
+msp/
+
+# Network configuration overrides
+connection-profile.json
+connection.json
+
+# Local development files
+.local/
+temp/
+tmp/
+
+# Documentation build
+docs/_build/
+site/
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Runtime data
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity

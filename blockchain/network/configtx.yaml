@@ -1,0 +1,332 @@
+# ---
+# Organizations:
+#   - &OrdererOrg
+#     Name: OrdererOrg
+#     ID: OrdererMSP
+#     MSPDir: crypto-config/ordererOrganizations/olive.com/msp
+#     Policies:
+#       Readers:
+#         Type: Signature
+#         Rule: "OR('OrdererMSP.member')"
+#       Writers:
+#         Type: Signature
+#         Rule: "OR('OrdererMSP.member')"
+#       Admins:
+#         Type: Signature
+#         Rule: "OR('OrdererMSP.admin')"
+
+#   - &FarmerOrg
+#     Name: FarmerOrgMSP
+#     ID: FarmerOrgMSP
+#     MSPDir: crypto-config/peerOrganizations/farmer.olive.com/msp
+#     Policies:
+#       Readers:
+#         Type: Signature
+#         Rule: "OR('FarmerOrgMSP.admin', 'FarmerOrgMSP.peer', 'FarmerOrgMSP.client')"
+#       Writers:
+#         Type: Signature
+#         Rule: "OR('FarmerOrgMSP.admin', 'FarmerOrgMSP.client')"
+#       Admins:
+#         Type: Signature
+#         Rule: "OR('FarmerOrgMSP.admin')"
+#     AnchorPeers:
+#       - Host: peer0.farmer.olive.com
+#         Port: 7051
+
+#   - &RecyclerOrg
+#     Name: RecyclerOrgMSP
+#     ID: RecyclerOrgMSP
+#     MSPDir: crypto-config/peerOrganizations/recycler.olive.com/msp
+#     Policies:
+#       Readers:
+#         Type: Signature
+#         Rule: "OR('RecyclerOrgMSP.admin', 'RecyclerOrgMSP.peer', 'RecyclerOrgMSP.client')"
+#       Writers:
+#         Type: Signature
+#         Rule: "OR('RecyclerOrgMSP.admin', 'RecyclerOrgMSP.client')"
+#       Admins:
+#         Type: Signature
+#         Rule: "OR('RecyclerOrgMSP.admin')"
+#     AnchorPeers:
+#       - Host: peer0.recycler.olive.com
+#         Port: 8051
+
+#   - &ExtractionOrg
+#     Name: ExtractionOrgMSP
+#     ID: ExtractionOrgMSP
+#     MSPDir: crypto-config/peerOrganizations/extraction.olive.com/msp
+#     Policies:
+#       Readers:
+#         Type: Signature
+#         Rule: "OR('ExtractionOrgMSP.admin', 'ExtractionOrgMSP.peer', 'ExtractionOrgMSP.client')"
+#       Writers:
+#         Type: Signature
+#         Rule: "OR('ExtractionOrgMSP.admin', 'ExtractionOrgMSP.client')"
+#       Admins:
+#         Type: Signature
+#         Rule: "OR('ExtractionOrgMSP.admin')"
+#     AnchorPeers:
+#       - Host: peer0.extraction.olive.com
+#         Port: 9051
+
+# Capabilities:
+#   Channel: &ChannelCapabilities
+#     V2_0: true
+#   Application: &ApplicationCapabilities
+#     V2_0: true
+#   Orderer: &OrdererCapabilities
+#     V2_0: true
+
+# Application: &ApplicationDefaults
+#   Organizations:
+#   Policies:
+#     Readers:
+#       Type: ImplicitMeta
+#       Rule: "ANY Readers"
+#     Writers:
+#       Type: ImplicitMeta
+#       Rule: "ANY Writers"
+#     Admins:
+#       Type: ImplicitMeta
+#       Rule: "MAJORITY Admins"
+
+# Orderer: &OrdererDefaults
+#   OrdererType: etcdraft
+#   Addresses:
+#     - orderer.olive.com:7050
+#   BatchTimeout: 2s
+#   BatchSize:
+#     MaxMessageCount: 500
+#     AbsoluteMaxBytes: 10 MB
+#     PreferredMaxBytes: 2 MB
+#   EtcdRaft:
+#     Consenters:
+#       - Host: orderer.olive.com
+#         Port: 7050
+#         ClientTLSCert: crypto-config/ordererOrganizations/olive.com/orderers/orderer.olive.com/tls/server.crt
+#         ServerTLSCert: crypto-config/ordererOrganizations/olive.com/orderers/orderer.olive.com/tls/server.crt
+#   Policies:
+#     Readers:
+#       Type: ImplicitMeta
+#       Rule: "ANY Readers"
+#     Writers:
+#       Type: ImplicitMeta
+#       Rule: "ANY Writers"
+#     Admins:
+#       Type: ImplicitMeta
+#       Rule: "MAJORITY Admins"
+#     BlockValidation:
+#       Type: ImplicitMeta
+#       Rule: "ANY Writers"
+
+# Channel: &ChannelDefaults
+#   Policies:
+#     Readers:
+#       Type: ImplicitMeta
+#       Rule: "ANY Readers"
+#     Writers:
+#       Type: ImplicitMeta
+#       Rule: "ANY Writers"
+#     Admins:
+#       Type: ImplicitMeta
+#       Rule: "MAJORITY Admins"
+#   Capabilities:
+#     <<: *ChannelCapabilities
+
+# Profiles:
+#   ThreeOrgsOrdererGenesis:
+#     <<: *ChannelDefaults
+#     Orderer:
+#       <<: *OrdererDefaults
+#       OrdererType: etcdraft
+#       Addresses:
+#         - orderer.olive.com:7050
+#       EtcdRaft:
+#         Consenters:
+#           - Host: orderer.olive.com
+#             Port: 7050
+#             ClientTLSCert: crypto-config/ordererOrganizations/olive.com/orderers/orderer.olive.com/tls/server.crt
+#             ServerTLSCert: crypto-config/ordererOrganizations/olive.com/orderers/orderer.olive.com/tls/server.crt
+#       Organizations:
+#         - *OrdererOrg
+#     Consortiums:
+#       SampleConsortium:
+#         Organizations:
+#           - *FarmerOrg
+#           - *RecyclerOrg
+#           - *ExtractionOrg
+
+#   ThreeOrgsChannel:
+#     <<: *ChannelDefaults
+#     Consortium: SampleConsortium
+#     Application:
+#       <<: *ApplicationDefaults
+#       Organizations:
+#         - *FarmerOrg
+#         - *RecyclerOrg
+#         - *ExtractionOrg
+#       Capabilities:
+#         <<: *ApplicationCapabilities
+
+
+Organizations:
+  - &OrdererOrg
+    Name: OrdererOrg
+    ID: OrdererMSP
+    MSPDir: crypto-config/ordererOrganizations/olive.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('OrdererMSP.admin')"
+
+  - &FarmerOrg
+    Name: FarmerOrgMSP
+    ID: FarmerOrgMSP
+    MSPDir: crypto-config/peerOrganizations/farmer.olive.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('FarmerOrgMSP.admin', 'FarmerOrgMSP.peer', 'FarmerOrgMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('FarmerOrgMSP.admin', 'FarmerOrgMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('FarmerOrgMSP.admin')"
+    AnchorPeers:
+      - Host: peer0.farmer.olive.com
+        Port: 7051
+
+  - &RecyclerOrg
+    Name: RecyclerOrgMSP
+    ID: RecyclerOrgMSP
+    MSPDir: crypto-config/peerOrganizations/recycler.olive.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('RecyclerOrgMSP.admin', 'RecyclerOrgMSP.peer', 'RecyclerOrgMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('RecyclerOrgMSP.admin', 'RecyclerOrgMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('RecyclerOrgMSP.admin')"
+    AnchorPeers:
+      - Host: peer0.recycler.olive.com
+        Port: 8051
+
+  - &ExtractionOrg
+    Name: ExtractionOrgMSP
+    ID: ExtractionOrgMSP
+    MSPDir: crypto-config/peerOrganizations/extraction.olive.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('ExtractionOrgMSP.admin', 'ExtractionOrgMSP.peer', 'ExtractionOrgMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('ExtractionOrgMSP.admin', 'ExtractionOrgMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('ExtractionOrgMSP.admin')"
+    AnchorPeers:
+      - Host: peer0.extraction.olive.com
+        Port: 9051
+
+Capabilities:
+  Channel: &ChannelCapabilities
+    V2_0: true
+  Application: &ApplicationCapabilities
+    V2_0: true
+  Orderer: &OrdererCapabilities
+    V2_0: true
+
+Application: &ApplicationDefaults
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+  Capabilities:
+    <<: *ApplicationCapabilities
+
+Orderer: &OrdererDefaults
+  OrdererType: etcdraft
+  Addresses:
+    - orderer.olive.com:7050
+  BatchTimeout: 2s
+  BatchSize:
+    MaxMessageCount: 500
+    AbsoluteMaxBytes: 10 MB
+    PreferredMaxBytes: 2 MB
+  EtcdRaft:
+    Consenters:
+      - Host: orderer.olive.com
+        Port: 7050
+        ClientTLSCert: crypto-config/ordererOrganizations/olive.com/orderers/orderer.olive.com/tls/server.crt
+        ServerTLSCert: crypto-config/ordererOrganizations/olive.com/orderers/orderer.olive.com/tls/server.crt
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+  Capabilities:
+    <<: *OrdererCapabilities
+
+Channel: &ChannelDefaults
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+  Capabilities:
+    <<: *ChannelCapabilities
+
+Profiles:
+  ThreeOrgsOrdererGenesis:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *OrdererOrg
+    Consortiums:
+      SampleConsortium:
+        Organizations:
+          - *FarmerOrg
+          - *RecyclerOrg
+          - *ExtractionOrg
+
+  ThreeOrgsChannel:
+    <<: *ChannelDefaults
+    Consortium: SampleConsortium
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *FarmerOrg
+        - *RecyclerOrg
+        - *ExtractionOrg

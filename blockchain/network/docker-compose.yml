@@ -1,0 +1,143 @@
+version: '2'
+
+networks:
+  olive-network:
+    driver: bridge
+
+services:
+  orderer.olive.com:
+    container_name: orderer.olive.com
+    image: hyperledger/fabric-orderer:2.4
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_LISTENPORT=7050
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+      - ORDERER_GENERAL_GENESISMETHOD=file  # Ajout crucial pour spécifier la méthode de génésis
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/genesis.block  # Chemin corrigé pour correspondre au volume
+    volumes:
+      - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/genesis.block  # Chemin corrigé (suppression de 'orderer.')
+      - ./crypto-config/ordererOrganizations/olive.com/orderers/orderer.olive.com/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/olive.com/orderers/orderer.olive.com/tls:/var/hyperledger/orderer/tls
+    ports:
+      - 7050:7050
+    networks:
+      - olive-network
+
+  peer0.farmer.olive.com:
+    container_name: peer0.farmer.olive.com
+    image: hyperledger/fabric-peer:2.4
+    environment:
+      - CORE_PEER_ID=peer0.farmer.olive.com
+      - CORE_PEER_ADDRESS=peer0.farmer.olive.com:7051
+      - CORE_PEER_LOCALMSPID=FarmerOrgMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peer/msp  # Chemin standardisé
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peer/tls/server.crt  # Chemin cohérent
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peer/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peer/tls/ca.crt
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.farmer.olive.com:7051
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock  # Ajout important pour les chaincodes
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/farmer.olive.com/peers/peer0.farmer.olive.com/msp:/etc/hyperledger/peer/msp  # Chemin corrigé
+      - ./crypto-config/peerOrganizations/farmer.olive.com/peers/peer0.farmer.olive.com/tls:/etc/hyperledger/peer/tls  # Chemin corrigé
+    ports:
+      - 7051:7051
+    depends_on:
+      - orderer.olive.com
+    networks:
+      - olive-network
+
+  peer0.recycler.olive.com:
+    container_name: peer0.recycler.olive.com
+    image: hyperledger/fabric-peer:2.4
+    environment:
+      - CORE_PEER_ID=peer0.recycler.olive.com
+      - CORE_PEER_ADDRESS=peer0.recycler.olive.com:8051
+      - CORE_PEER_LOCALMSPID=RecyclerOrgMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peer/msp  # Standardisé
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peer/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peer/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peer/tls/ca.crt
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.recycler.olive.com:8051
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock  # Ajouté
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/recycler.olive.com/peers/peer0.recycler.olive.com/msp:/etc/hyperledger/peer/msp
+      - ./crypto-config/peerOrganizations/recycler.olive.com/peers/peer0.recycler.olive.com/tls:/etc/hyperledger/peer/tls
+    ports:
+      - 8051:7051
+    depends_on:
+      - orderer.olive.com
+    networks:
+      - olive-network
+
+  peer0.extraction.olive.com:
+    container_name: peer0.extraction.olive.com
+    image: hyperledger/fabric-peer:2.4
+    environment:
+      - CORE_PEER_ID=peer0.extraction.olive.com
+      - CORE_PEER_ADDRESS=peer0.extraction.olive.com:9051
+      - CORE_PEER_LOCALMSPID=ExtractionOrgMSP  # Correction orthographique (Extraction au lieu de Extraction)
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peer/msp
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peer/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peer/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peer/tls/ca.crt
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.extraction.olive.com:9051
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock  # Ajouté
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/extraction.olive.com/peers/peer0.extraction.olive.com/msp:/etc/hyperledger/peer/msp
+      - ./crypto-config/peerOrganizations/extraction.olive.com/peers/peer0.extraction.olive.com/tls:/etc/hyperledger/peer/tls
+    ports:
+      - 9051:7051
+    depends_on:
+      - orderer.olive.com
+    networks:
+      - olive-network
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:2.4
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.farmer.olive.com:7051
+      - CORE_PEER_LOCALMSPID=FarmerOrgMSP
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/farmer.olive.com/users/Admin@farmer.olive.com/msp
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/farmer.olive.com/peers/peer0.farmer.olive.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/farmer.olive.com/peers/peer0.farmer.olive.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/farmer.olive.com/peers/peer0.farmer.olive.com/tls/ca.crt
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./../chaincode:/opt/gopath/src/github.com/chaincode
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+      - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+      - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - orderer.olive.com
+      - peer0.farmer.olive.com
+      - peer0.recycler.olive.com
+      - peer0.extraction.olive.com
+    networks:
+      - olive-network

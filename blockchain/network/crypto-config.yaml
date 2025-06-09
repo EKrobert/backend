@@ -1,0 +1,31 @@
+PeerOrgs:
+  - Name: FarmerOrg
+    Domain: farmer.olive.com
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+
+  - Name: RecyclerOrg
+    Domain: recycler.olive.com
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+
+  - Name: ExtractionOrg
+    Domain: extraction.olive.com
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+
+OrdererOrgs:
+  - Name: OrdererOrg
+    Domain: olive.com
+    EnableNodeOUs: true
+    Specs:
+      - Hostname: orderer
